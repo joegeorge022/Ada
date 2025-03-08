@@ -3,8 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ada - AI Girlfriend</title>
+    
+    <title>Ada - Your AI Girlfriend | Companion</title>
+    <meta name="title" content="Ada - Your AI Girlfriend | Cyberpunk AI Companion">
+    <meta name="description" content="Experience deep, meaningful conversations with Ada, your cyberpunk AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
+    <meta name="keywords" content="AI girlfriend, cyberpunk companion, virtual relationship, AI chat, emotional AI, digital companion, Ada AI">
+    <meta name="author" content="Joe">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ada-gf.pages.dev/">
+    <meta property="og:title" content="Ada - Your AI Girlfriend | Cyberpunk AI Companion">
+    <meta property="og:description" content="Experience deep, meaningful conversations with Ada, your cyberpunk AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
+    <meta property="og:image" content="https://ada-gf.pages.dev/images/ada.webp">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ada-gf.pages.dev/">
+    <meta property="twitter:title" content="Ada - Your AI Girlfriend | Cyberpunk AI Companion">
+    <meta property="twitter:description" content="Experience deep, meaningful conversations with Ada, your cyberpunk AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
+    <meta property="twitter:image" content="https://ada-gf.pages.dev/images/ada.webp">
+    
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    
+    <meta name="theme-color" content="#0a0a16">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Ada AI">
+    
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -521,8 +549,8 @@
         <div class="chat-header">
             <h2>Ada - Your AI Girlfriend</h2>
             <div class="header-actions">
-                <button class="settings-button" id="settings-button">
-                    <i class="fas fa-cog"></i>
+                <button class="settings-button" id="settings-button" aria-label="Settings Menu" aria-expanded="false" aria-controls="settings-menu" aria-haspopup="true">
+                    <i class="fas fa-cog" aria-hidden="true"></i>
                 </button>
                 <div class="settings-menu" id="settings-menu">
                     <button id="clear-chat">
@@ -539,7 +567,7 @@
                 <div class="chat-messages" id="chat-messages">
                 </div>
                 <div class="typing-indicator" id="typing-indicator">
-                    Ada is processing...
+                    Ada is typing...
                 </div>
                 <div class="chat-input">
                     <input type="text" id="message-input" placeholder="Type your message...">

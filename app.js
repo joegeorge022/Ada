@@ -54,20 +54,19 @@ const settingsButton = document.getElementById('settings-button');
 const settingsMenu = document.getElementById('settings-menu');
 const clearButton = document.getElementById('clear-chat');
 
-// Toggle settings menu
 settingsButton.addEventListener('click', (e) => {
     e.stopPropagation();
-    settingsMenu.classList.toggle('active');
+    const isExpanded = settingsMenu.classList.toggle('active');
+    settingsButton.setAttribute('aria-expanded', isExpanded);
 });
 
-// Close settings menu when clicking outside
 document.addEventListener('click', (e) => {
     if (!settingsMenu.contains(e.target) && !settingsButton.contains(e.target)) {
         settingsMenu.classList.remove('active');
+        settingsButton.setAttribute('aria-expanded', 'false');
     }
 });
 
-// Clear chat history
 clearButton.addEventListener('click', () => {
     if (confirm('Are you sure you want to clear the chat history?')) {
         chatMessages.innerHTML = '';
