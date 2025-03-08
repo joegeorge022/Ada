@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ada - AI Girlfriend</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <style>
         :root {
             --neon-pink: #ff2e88;
@@ -25,9 +26,20 @@
             padding: 20px;
             background-color: var(--dark-bg);
             color: #fff;
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(255, 46, 136, 0.05) 0%, transparent 50%),
-                linear-gradient(0deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            background: url('images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 22, 0.5);
+            z-index: -1;
         }
 
         .chat-container {
@@ -212,6 +224,68 @@
             0% { opacity: 0.5; }
             50% { opacity: 1; }
             100% { opacity: 0.5; }
+        }
+
+        /* Add responsive design for mobile devices */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .chat-content {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .ada-image-container {
+                flex: 0 0 auto;
+                height: 400px;
+                margin-bottom: 10px;
+            }
+
+            .chat-interface {
+                height: 500px;
+            }
+
+            .chat-messages {
+                height: 400px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        /* Additional adjustments for very small screens */
+        @media screen and (max-width: 480px) {
+            .ada-image-container {
+                height: 300px;
+            }
+
+            .chat-interface {
+                height: 400px;
+            }
+
+            .chat-messages {
+                height: 300px;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+
+            .chat-input {
+                padding: 10px;
+            }
+
+            #message-input {
+                padding: 8px;
+            }
+
+            #send-button {
+                padding: 8px 15px;
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
