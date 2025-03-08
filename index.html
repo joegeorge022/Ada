@@ -29,6 +29,9 @@
             background: url('images/background.jpg') no-repeat center center fixed;
             background-size: cover;
             position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         body::before {
@@ -50,6 +53,10 @@
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 40px);
         }
 
         .chat-header {
@@ -86,6 +93,8 @@
             display: flex;
             gap: 20px;
             padding: 20px;
+            flex: 1;
+            overflow: hidden;
         }
 
         .ada-image-container {
@@ -110,15 +119,16 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: 600px;
+            min-height: 0;
         }
 
         .chat-messages {
-            height: 600px;
+            flex: 1;
             overflow-y: auto;
             padding: 15px;
             scrollbar-width: thin;
             scrollbar-color: var(--neon-pink) var(--dark-bg);
+            min-height: 0;
         }
 
         .chat-messages::-webkit-scrollbar {
@@ -229,6 +239,11 @@
         @media screen and (max-width: 768px) {
             body {
                 padding: 10px;
+                padding-bottom: 30px;
+            }
+
+            .chat-container {
+                max-height: calc(100vh - 20px);
             }
 
             .chat-content {
@@ -239,16 +254,19 @@
 
             .ada-image-container {
                 flex: 0 0 auto;
-                height: 400px;
+                height: 300px;
                 margin-bottom: 10px;
             }
 
             .chat-interface {
-                height: 500px;
+                flex: 1;
+                min-height: 400px;
             }
 
             .chat-messages {
-                height: 400px;
+                flex: 1;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
             }
 
             .message {
@@ -257,16 +275,29 @@
         }
 
         @media screen and (max-width: 480px) {
+            body {
+                padding: 8px;
+                padding-bottom: 20px;
+            }
+
+            .chat-container {
+                max-height: calc(100vh - 16px);
+            }
+
             .ada-image-container {
-                height: 300px;
+                height: 200px;
             }
 
             .chat-interface {
-                height: 400px;
+                flex: 1;
+                min-height: 350px;
             }
 
             .chat-messages {
-                height: 300px;
+                flex: 1;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+                padding-bottom: 10px;
             }
 
             .message {
@@ -274,15 +305,18 @@
             }
 
             .chat-input {
-                padding: 10px;
+                padding: 12px;
+                position: relative;
+                z-index: 2;
+                background: rgba(10, 10, 22, 0.95);
             }
 
             #message-input {
-                padding: 8px;
+                padding: 10px;
             }
 
             #send-button {
-                padding: 8px 15px;
+                padding: 10px 18px;
             }
         }
     </style>
