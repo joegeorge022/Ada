@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Cyberpunk AI Girlfriend powered by Groq",
   "scripts": {
-    "start": "vercel dev",
-    "build": "echo 'No build step required'"
+    "start": "node server.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3"
