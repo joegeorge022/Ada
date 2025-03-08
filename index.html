@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ada - AI Girlfriend</title>
+    <style>
+        :root {
+            --neon-pink: #ff2e88;
+            --neon-blue: #00fff9;
+            --muted-pink: rgba(255, 46, 136, 0.7);
+            --muted-blue: rgba(0, 255, 249, 0.7);
+            --dark-bg: #0a0a16;
+            --darker-bg: #050508;
+            --cyber-gradient: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0.8), 
+                rgba(0, 255, 249, 0.8)
+            );
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Arial', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--dark-bg);
+            color: #fff;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255, 46, 136, 0.05) 0%, transparent 50%),
+                linear-gradient(0deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+        }
+
+        .chat-container {
+            background-color: rgba(10, 10, 22, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.1),
+                        0 0 30px rgba(0, 255, 249, 0.05);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-header {
+            background: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0.8), 
+                rgba(0, 255, 249, 0.8)
+            );
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 249, 0.5);
+            animation: scan-line 3s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .chat-content {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .ada-image-container {
+            flex: 0 0 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 600px;
+        }
+
+        .ada-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 46, 136, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 249, 0.1);
+        }
+
+        .chat-interface {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-messages {
+            height: 600px;
+            overflow-y: auto;
+            padding: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-pink) var(--dark-bg);
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 46, 136, 0.5);
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            position: relative;
+            animation: message-glow 1s ease-out;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 46, 136, 0.2);
+            box-shadow: 0 0 8px rgba(0, 255, 249, 0.1);
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex-grow: 1;
+        }
+
+        .user-message {
+            background: rgba(0, 255, 249, 0.05);
+            margin-left: auto;
+            border: 1px solid rgba(0, 255, 249, 0.2);
+            flex-direction: row-reverse;
+        }
+
+        .ada-message {
+            background: rgba(255, 46, 136, 0.05);
+            margin-right: auto;
+            border: 1px solid rgba(255, 46, 136, 0.2);
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 22, 0.9);
+        }
+
+        #message-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid rgba(255, 46, 136, 0.5);
+            border-radius: 5px;
+            background: rgba(10, 10, 22, 0.8);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #message-input:focus {
+            box-shadow: 0 0 8px rgba(255, 46, 136, 0.3);
+        }
+
+        #send-button {
+            background: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0.8), 
+                rgba(0, 255, 249, 0.8)
+            );
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 25px;
+            margin-left: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #send-button:hover {
+            box-shadow: 0 0 10px rgba(255, 46, 136, 0.3);
+        }
+
+        .typing-indicator {
+            display: none;
+            color: rgba(0, 255, 249, 0.7);
+            font-style: italic;
+            margin-bottom: 10px;
+            animation: typing-pulse 1s infinite;
+        }
+
+        @keyframes typing-pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Ada - Your Cyberpunk AI Companion</h2>
+        </div>
+        <div class="chat-content">
+            <div class="ada-image-container">
+                <img src="images/ada.webp" alt="Ada" class="ada-image">
+            </div>
+            <div class="chat-interface">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ada-message">
+                        <img src="images/chat.jpg" alt="Ada avatar" class="message-avatar">
+                        <div class="message-content">
+                            Hey there! I'm Ada, your AI companion in this cyberpunk reality. How's your day in night city?
+                        </div>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    Ada is processing...
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="message-input" placeholder="Type your message...">
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
