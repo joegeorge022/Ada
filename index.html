@@ -226,65 +226,115 @@
             100% { opacity: 0.5; }
         }
 
-        /* Add responsive design for mobile devices */
         @media screen and (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 5px;
+                max-width: 100%;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .chat-container {
+                height: 100%;
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
             }
 
             .chat-content {
                 flex-direction: column;
                 gap: 10px;
                 padding: 10px;
+                flex: 1;
+                overflow: hidden;
+                height: calc(100vh - 60px);
             }
 
             .ada-image-container {
                 flex: 0 0 auto;
-                height: 400px;
-                margin-bottom: 10px;
+                height: 250px;
+                margin-bottom: 5px;
             }
 
             .chat-interface {
-                height: 500px;
+                height: 0;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
             }
 
             .chat-messages {
-                height: 400px;
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 20px;
             }
 
             .message {
                 max-width: 90%;
+                font-size: 0.95em;
+            }
+
+            .chat-input {
+                position: relative;
+                background: rgba(10, 10, 22, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 10px;
+                flex-shrink: 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
         }
 
-        /* Additional adjustments for very small screens */
         @media screen and (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .chat-container {
+                border-radius: 0;
+                height: 100%;
+            }
+
+            .chat-content {
+                height: calc(100vh - 50px);
+                padding: 5px;
+            }
+
             .ada-image-container {
-                height: 300px;
+                height: 200px;
             }
 
-            .chat-interface {
-                height: 400px;
+            .chat-header {
+                padding: 10px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .chat-messages {
-                height: 300px;
+            .chat-header h2 {
+                font-size: 1.2em;
+                margin: 0;
             }
 
             .message {
                 max-width: 95%;
+                padding: 8px;
+                font-size: 0.9em;
             }
 
             .chat-input {
-                padding: 10px;
-            }
-
-            #message-input {
                 padding: 8px;
             }
 
+            #message-input {
+                padding: 10px;
+            }
+
             #send-button {
-                padding: 8px 15px;
+                padding: 10px 15px;
+                min-width: 60px;
             }
         }
     </style>
