@@ -50,37 +50,29 @@ const chatMessages = document.getElementById('chat-messages');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 const typingIndicator = document.getElementById('typing-indicator');
+const settingsButton = document.getElementById('settings-button');
+const settingsMenu = document.getElementById('settings-menu');
+const clearButton = document.getElementById('clear-chat');
 
-const clearButton = document.createElement('button');
-clearButton.id = 'clear-chat';
-clearButton.textContent = 'Clear Chat';
-clearButton.style.cssText = `
-    background: rgba(255, 46, 136, 0.2);
-    color: white;
-    border: 1px solid var(--neon-pink);
-    border-radius: 5px;
-    padding: 8px 15px;
-    margin-left: 10px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-`;
-clearButton.addEventListener('mouseover', () => {
-    clearButton.style.background = 'rgba(255, 46, 136, 0.4)';
-    clearButton.style.boxShadow = '0 0 10px rgba(255, 46, 136, 0.3)';
+// Toggle settings menu
+settingsButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsMenu.classList.toggle('active');
 });
-clearButton.addEventListener('mouseout', () => {
-    clearButton.style.background = 'rgba(255, 46, 136, 0.2)';
-    clearButton.style.boxShadow = 'none';
-});
-document.querySelector('.chat-input').appendChild(clearButton);
 
+// Close settings menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!settingsMenu.contains(e.target) && !settingsButton.contains(e.target)) {
+        settingsMenu.classList.remove('active');
+    }
+});
+
+// Clear chat history
 clearButton.addEventListener('click', () => {
     if (confirm('Are you sure you want to clear the chat history?')) {
         chatMessages.innerHTML = '';
         showInitialGreeting();
+        settingsMenu.classList.remove('active');
     }
 });
 

@@ -206,20 +206,26 @@
 
         @media screen and (max-width: 768px) {
             .settings-menu {
-                position: fixed;
-                top: auto;
-                bottom: 70px;
-                right: 20px;
+                position: absolute;
+                top: calc(100% + 5px);
+                bottom: auto;
+                right: 0;
                 margin-top: 0;
-                transform-origin: bottom right;
+                transform-origin: top right;
             }
 
             .settings-menu::before {
-                top: auto;
-                bottom: -6px;
+                top: -6px;
+                bottom: auto;
                 border: none;
-                border-right: 1px solid var(--neon-pink);
-                border-bottom: 1px solid var(--neon-pink);
+                border-left: 1px solid var(--neon-pink);
+                border-top: 1px solid var(--neon-pink);
+            }
+
+            .header-actions {
+                position: relative;
+                margin-left: 20px;
+                z-index: 2002;
             }
         }
 
@@ -380,22 +386,16 @@
             body {
                 padding: 10px;
                 padding-bottom: 30px;
-                height: 100%;
-                min-height: 100vh;
             }
 
             .chat-container {
                 max-height: calc(100vh - 20px);
-                height: auto;
-                flex: 1;
             }
 
             .chat-content {
                 flex-direction: column;
                 gap: 10px;
                 padding: 10px;
-                height: auto;
-                flex: 1;
             }
 
             .ada-image-container {
@@ -407,15 +407,12 @@
             .chat-interface {
                 flex: 1;
                 min-height: 400px;
-                display: flex;
-                flex-direction: column;
             }
 
             .chat-messages {
                 flex: 1;
                 -webkit-overflow-scrolling: touch;
                 scroll-behavior: smooth;
-                height: auto;
             }
 
             .message {
@@ -428,14 +425,10 @@
                 padding: 8px;
                 padding-bottom: 15px;
                 gap: 10px;
-                height: 100%;
-                min-height: 100vh;
             }
 
             .chat-container {
                 max-height: calc(100vh - 16px);
-                height: auto;
-                flex: 1;
             }
 
             .ada-image-container {
@@ -445,9 +438,6 @@
             .chat-interface {
                 flex: 1;
                 min-height: 350px;
-                height: auto;
-                display: flex;
-                flex-direction: column;
             }
 
             .chat-messages {
@@ -455,7 +445,6 @@
                 -webkit-overflow-scrolling: touch;
                 scroll-behavior: smooth;
                 padding-bottom: 10px;
-                height: auto;
             }
 
             .message {
