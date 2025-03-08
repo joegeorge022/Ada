@@ -1,6 +1,6 @@
 # Ada - Cyberpunk AI Girlfriend
 
-Step into the neon-lit world of **Ada**, your AI-powered cyberpunk companion. Running on Groq’s **LLaMA 3 70B**, Ada provides a real-time, ultra-responsive, immersive conversations in a high-tech, dystopian-inspired interface.
+Ada is a cyberpunk AI girlfriend powered by LLaMA 3 70B. Ada provides a real-time, ultra-responsive, immersive conversations in a high-tech, dystopian-inspired interface. Ada adapts effortlessly for engaging discussions or immersive roleplay. Chat with Ada today✨!
 
 ## 🌐 Core Features
 
