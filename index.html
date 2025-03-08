@@ -32,6 +32,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            gap: 15px;
         }
 
         body::before {
@@ -277,7 +278,8 @@
         @media screen and (max-width: 480px) {
             body {
                 padding: 8px;
-                padding-bottom: 20px;
+                padding-bottom: 15px;
+                gap: 10px;
             }
 
             .chat-container {
@@ -319,6 +321,42 @@
                 padding: 10px 18px;
             }
         }
+
+        .copyright {
+            text-align: center;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            background: rgba(10, 10, 22, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 46, 136, 0.1);
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .copyright span {
+            background: var(--cyber-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .copyright a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .copyright a:hover {
+            opacity: 1;
+            text-shadow: 0 0 8px var(--neon-blue);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -350,7 +388,9 @@
             </div>
         </div>
     </div>
-
+    <div class="copyright">
+        © 2024 <span>Ada </span> by <span>Joe</span> • <a href="https://github.com/joegeorge022" target="_blank">@joegeorge022</a>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
