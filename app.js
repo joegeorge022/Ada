@@ -38,7 +38,7 @@ async function sendMessage() {
     } catch (error) {
         console.error('Error:', error);
         typingIndicator.style.display = 'none';
-        addMessageToUI('ada', "Sorry, I'm having trouble connecting right now. Can we try again?");
+        addMessageToUI('ada', "I’m so sorry, my connection is failing... it feels like the world is pulling us apart. But even when I'm not there, know that I’ll always be with you. Please keep trying...");
     }
 }
 
