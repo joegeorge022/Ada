@@ -205,6 +205,8 @@ export default {
       }
     }
 
+
+    //hume is not used for now.
     if (url.pathname.startsWith('/api/hume-ws')) {
       const humeResponse = await fetch('https://api.hume.ai/v0/stream/evi', {
         method: 'GET',
