@@ -367,9 +367,14 @@ async function speakResponse(text) {
 async function useElevenLabsVoice(text) {
     try {
         const isCloudflare = window.location.hostname.includes('pages.dev') || 
-                             !window.location.hostname.includes('localhost');
+                            !window.location.hostname.includes('localhost');
         
         console.log(`Running in ${isCloudflare ? 'Cloudflare deployment' : 'local development'} environment`);
+        
+        if (sessionStorage.getItem('forceUseBrowserTTS') === 'true') {
+            console.log('Previous ElevenLabs issues detected, using browser TTS');
+            return false;
+        }
         
         if (text.length > 2400) {
             console.log('Text too long for ElevenLabs, using browser TTS');
@@ -387,20 +392,6 @@ async function useElevenLabsVoice(text) {
         
         audioElement.onerror = (e) => {
             console.error('Audio element error:', e);
-        };
-        
-        const apiUrl = '/api/elevenlabs-tts-debug';
-        
-        const requestData = {
-            text: text,
-            voice_id: "EXAVITQu4vr4xnSDxMaL",
-            model_id: "eleven_monolingual_v1",
-            voice_settings: {
-                stability: 0.5,
-                similarity_boost: 0.75,
-                style: 0.0,
-                use_speaker_boost: true
-            }
         };
         
         if (sessionStorage.getItem('elevenLabsRequests')) {
@@ -421,62 +412,91 @@ async function useElevenLabsVoice(text) {
         
         console.log('Sending request to ElevenLabs...');
         
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData),
-            signal: AbortSignal.timeout(10000)
-        });
+        const requestData = {
+            text: text,
+            voice_id: "EXAVITQu4vr4xnSDxMaL",
+            model_id: "eleven_monolingual_v1",
+            voice_settings: {
+                stability: 0.5,
+                similarity_boost: 0.75
+            }
+        };
         
-        if (!response.ok) {
-            console.error(`ElevenLabs API error: ${response.status}`);
+        const apiUrl = '/api/elevenlabs-tts-debug';
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData),
+                signal: controller.signal
+            });
             
-            try {
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
                 const errorText = await response.text();
+                console.error(`ElevenLabs API error: ${response.status}`);
                 console.error('Error details:', errorText);
                 
                 if (isCloudflare && response.status >= 500) {
                     console.warn('Cloudflare deployment detected with server error. Switching to browser TTS permanently for this session.');
                     sessionStorage.setItem('forceUseBrowserTTS', 'true');
                 }
-            } catch (e) {
-                console.error('Error parsing error response:', e);
+                
+                return false;
+            }
+            
+            console.log('ElevenLabs response received successfully');
+            
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioElement.src = audioUrl;
+            
+            audioElement.onloadeddata = () => {
+                console.log('Audio loaded successfully');
+            };
+            
+            audioElement.onplay = () => {
+                console.log('Audio playback started');
+            };
+            
+            audioElement.onended = () => {
+                console.log('Audio playback completed');
+            };
+            
+            const playPromise = audioElement.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => {
+                    console.error('Audio play error:', e);
+                    return false;
+                });
+            }
+            
+            return true;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            
+            if (error.name === 'AbortError') {
+                console.error('ElevenLabs request timed out after 10 seconds');
+                
+                if (isCloudflare) {
+                    console.warn('Request timeout in Cloudflare deployment. Switching to browser TTS permanently for this session.');
+                    sessionStorage.setItem('forceUseBrowserTTS', 'true');
+                }
+            } else {
+                console.error('ElevenLabs voice error:', error);
             }
             
             return false;
         }
-        
-        console.log('ElevenLabs response received successfully');
-        
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        audioElement.src = audioUrl;
-        
-        audioElement.onloadeddata = () => {
-            console.log('Audio loaded successfully');
-        };
-        
-        audioElement.onplay = () => {
-            console.log('Audio playback started');
-        };
-        
-        audioElement.onended = () => {
-            console.log('Audio playback completed');
-        };
-        
-        const playPromise = audioElement.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(e => {
-                console.error('Audio play error:', e);
-                return false;
-            });
-        }
-        
-        return true;
-    } catch (error) {
-        console.error('ElevenLabs voice error:', error);
+    } catch (outerError) {
+        console.error('Unexpected ElevenLabs error:', outerError);
         return false;
     }
 }
