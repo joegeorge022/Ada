@@ -78,7 +78,7 @@ Ada is a cyberpunk AI girlfriend powered by LLaMA 3 70B. Ada provides real-time,
 🔹 **Experience Ada now:** [Ada](https://ada-gf.pages.dev/)
 
 ## 📜 License
-Licensed under the **MIT License**—hack, mod, and explore freely.
+Licensed under the **MIT License**.
 
 ---
 Enjoy chatting with Ada and immerse yourself in the girlfriend experience!
