@@ -224,7 +224,6 @@ function initializeSpeechRecognition() {
     }
     
     function stopListening() {
-        // Update UI
         isListening = false;
         voiceInputButton.innerHTML = '<i class="fas fa-microphone"></i>';
         voiceInputButton.classList.remove('recording');
@@ -485,6 +484,8 @@ async function useBrowserTTS(text) {
             
             if (sentences[index].includes('?')) {
                 utterance.pitch += 0.05;
+            }
+            
             if (sentences[index].includes('!')) {
                 utterance.rate += 0.05;
             }
