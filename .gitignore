@@ -1,5 +1,6 @@
 # Environment variables
 .env
+.env.*
 
 # API keys and secrets
 config.js
@@ -39,6 +40,10 @@ jspm_packages/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Development server file
+# server.js is only for local development
+server.js
 
 # Mac files
 .DS_Store

@@ -41,6 +41,27 @@ export default {
       }
     }
 
+    // Handle Hume AI WebSocket upgrade
+    if (url.pathname.startsWith('/api/hume-ws')) {
+      const humeResponse = await fetch('https://api.hume.ai/v0/stream/evi', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${env.HUME_API_KEY}`,
+          'Upgrade': request.headers.get('Upgrade'),
+          'Connection': request.headers.get('Connection')
+        }
+      });
+      
+      if (humeResponse.ok) {
+        return new Response(null, {
+          status: 101,
+          webSocket: humeResponse.webSocket
+        });
+      }
+      
+      return new Response('Failed to establish WebSocket connection', { status: 500 });
+    }
+
     // Serve static files
     return env.ASSETS.fetch(request);
   }

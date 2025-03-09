@@ -358,6 +358,38 @@
             padding: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(10, 10, 22, 0.9);
+            gap: 10px;
+        }
+
+        .voice-control-button {
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .voice-control-button:hover {
+            background: rgba(255, 46, 136, 0.1);
+            box-shadow: 0 0 10px rgba(255, 46, 136, 0.3);
+        }
+
+        .voice-control-button.recording {
+            background: var(--neon-pink);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         #message-input {
@@ -570,6 +602,9 @@
                     Ada is typing...
                 </div>
                 <div class="chat-input">
+                    <button id="voice-input-button" class="voice-control-button" aria-label="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
                     <input type="text" id="message-input" placeholder="Type your message...">
                     <button id="send-button">Send</button>
                 </div>

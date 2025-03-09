@@ -53,6 +53,11 @@ const typingIndicator = document.getElementById('typing-indicator');
 const settingsButton = document.getElementById('settings-button');
 const settingsMenu = document.getElementById('settings-menu');
 const clearButton = document.getElementById('clear-chat');
+const voiceInputButton = document.getElementById('voice-input-button');
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
+let humeWs = null;
 
 settingsButton.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -82,6 +87,102 @@ messageInput.addEventListener('keypress', function(e) {
     }
 });
 
+// Initialize Hume WebSocket connection
+async function initHumeWebSocket() {
+    try {
+        // Use local WebSocket in development, production URL in production
+        const wsUrl = window.location.hostname === 'localhost' 
+            ? 'ws://localhost:3000'
+            : 'wss://ada-gf.pages.dev/api/hume-ws';
+        
+        humeWs = new WebSocket(wsUrl);
+        
+        humeWs.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+        
+        humeWs.onmessage = handleHumeResponse;
+        humeWs.onerror = (error) => console.error('WebSocket error:', error);
+        humeWs.onclose = () => console.log('WebSocket connection closed');
+    } catch (error) {
+        console.error('Failed to connect to WebSocket:', error);
+    }
+}
+
+// Handle voice input button
+voiceInputButton.addEventListener('click', async () => {
+    if (!isRecording) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            startRecording(stream);
+            voiceInputButton.classList.add('recording');
+            isRecording = true;
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+        }
+    } else {
+        stopRecording();
+        voiceInputButton.classList.remove('recording');
+        isRecording = false;
+    }
+});
+
+// Start recording audio
+function startRecording(stream) {
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    
+    mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+            audioChunks.push(event.data);
+            // Stream to Hume in real-time
+            if (humeWs && humeWs.readyState === WebSocket.OPEN) {
+                event.data.arrayBuffer().then(buffer => {
+                    humeWs.send(buffer);
+                });
+            }
+        }
+    };
+    
+    mediaRecorder.start(100); // Collect data every 100ms
+}
+
+// Stop recording and process audio
+function stopRecording() {
+    return new Promise(resolve => {
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64Audio = reader.result.split(',')[1];
+                processAudioInput(base64Audio);
+            };
+            reader.readAsDataURL(audioBlob);
+            resolve();
+        };
+        mediaRecorder.stop();
+    });
+}
+
+// Process Hume AI response
+function handleHumeResponse(event) {
+    const response = JSON.parse(event.data);
+    if (response.text) {
+        messageInput.value = response.text;
+        sendMessage();
+    }
+}
+
+// Text-to-Speech for Ada's responses
+async function speakResponse(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.pitch = 1.1;
+    utterance.rate = 1.0;
+    window.speechSynthesis.speak(utterance);
+}
+
+// Modify sendMessage to include voice response
 async function sendMessage() {
     const userMessage = messageInput.value.trim();
     if (!userMessage) return;
@@ -102,6 +203,9 @@ async function sendMessage() {
         
         addMessageToUI('ada', response);
         
+        // Speak Ada's response
+        await speakResponse(response);
+        
         chatHistory.push({ role: "assistant", content: response });
         saveChatHistory();
     } catch (error) {
@@ -116,7 +220,12 @@ async function sendMessage() {
 
 async function getGroqResponse() {
     try {
-        const response = await fetch('/api/chat', {
+        // Use local endpoint in development, production URL in production
+        const apiUrl = window.location.hostname === 'localhost'
+            ? 'http://localhost:3000/api/chat'
+            : '/api/chat';
+            
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -178,4 +287,8 @@ function addMessageToUI(sender, message) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-document.addEventListener('DOMContentLoaded', loadChatHistory); 
+// Initialize Hume WebSocket on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadChatHistory();
+    initHumeWebSocket();
+}); 
