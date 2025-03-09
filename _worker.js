@@ -1,9 +1,7 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    
-    // Handle CORS preflight requests
-    if (request.method === 'OPTIONS') {
+        if (request.method === 'OPTIONS') {
       return new Response(null, {
         headers: {
           'Access-Control-Allow-Origin': '*',
@@ -83,7 +81,12 @@ export default {
               stability: 0.5,
               similarity_boost: 0.75
             }
-          })
+          }),
+          cf: {
+            cacheTtl: 0,
+            cacheEverything: false,
+            timeout: 30
+          }
         });
         
         if (!response.ok) {
@@ -158,7 +161,12 @@ export default {
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: headers,
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
+          cf: {
+            cacheTtl: 0,
+            cacheEverything: false,
+            timeout: 30
+          }
         });
         
         console.log('ElevenLabs response status:', response.status);
@@ -205,8 +213,6 @@ export default {
       }
     }
 
-
-    //hume is not used for now.
     if (url.pathname.startsWith('/api/hume-ws')) {
       const humeResponse = await fetch('https://api.hume.ai/v0/stream/evi', {
         method: 'GET',
