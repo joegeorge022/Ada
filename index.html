@@ -120,6 +120,53 @@
         .header-actions {
             position: relative;
             margin-left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 2002;
+        }
+
+        .control-button {
+            background: rgba(10, 10, 22, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2001;
+            width: 35px;
+            height: 35px;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(0, 255, 249, 0.1);
+        }
+
+        .control-button i {
+            font-size: 1.3rem;
+            color: white;
+            text-shadow: 0 0 5px rgba(0, 255, 249, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 249, 0.3);
+            border-color: var(--neon-blue);
+            transform: scale(1.05);
+        }
+
+        .control-button[aria-pressed="true"] {
+            background: var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
+        .control-button[aria-pressed="true"] i {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
         }
 
         .settings-button {
@@ -581,6 +628,9 @@
         <div class="chat-header">
             <h2>Ada - Your AI Girlfriend</h2>
             <div class="header-actions">
+                <button class="control-button" id="speaker-button" aria-label="Toggle Voice" aria-pressed="false">
+                    <i class="fas fa-volume-mute" aria-hidden="true"></i>
+                </button>
                 <button class="settings-button" id="settings-button" aria-label="Settings Menu" aria-expanded="false" aria-controls="settings-menu" aria-haspopup="true">
                     <i class="fas fa-cog" aria-hidden="true"></i>
                 </button>
