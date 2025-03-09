@@ -140,10 +140,13 @@ speakerButton.addEventListener('click', async () => {
 });
 
 function initializeSpeechRecognition() {
-    const voiceInputButton = document.getElementById('voice-input-button');
-    const messageInput = document.getElementById('message-input');
+    if (!voiceInputButton || !messageInput) {
+        console.error('Voice input elements not found, speech recognition disabled');
+        return;
+    }
     
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.error('Speech recognition not supported in this browser');
         voiceInputButton.style.display = 'none';
         return;
     }
@@ -341,14 +344,16 @@ function addMessageToUI(sender, message) {
 }
 
 async function speakResponse(text) {
-    if (!isVoiceEnabled) return;
+    if (!isVoiceEnabled || !window.speechSynthesis) return;
     
     try {
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
         
-        const useElevenLabs = await useElevenLabsVoice(text);
+        const forceBrowserTTS = sessionStorage.getItem('forceUseBrowserTTS') === 'true';
+        
+        const useElevenLabs = !forceBrowserTTS && await useElevenLabsVoice(text);
         
         if (!useElevenLabs) {
             await useBrowserTTS(text);
@@ -361,6 +366,11 @@ async function speakResponse(text) {
 
 async function useElevenLabsVoice(text) {
     try {
+        const isCloudflare = window.location.hostname.includes('pages.dev') || 
+                             !window.location.hostname.includes('localhost');
+        
+        console.log(`Running in ${isCloudflare ? 'Cloudflare deployment' : 'local development'} environment`);
+        
         if (text.length > 2400) {
             console.log('Text too long for ElevenLabs, using browser TTS');
             return false;
@@ -416,13 +426,25 @@ async function useElevenLabsVoice(text) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify(requestData),
+            signal: AbortSignal.timeout(10000)
         });
         
         if (!response.ok) {
             console.error(`ElevenLabs API error: ${response.status}`);
-            const errorText = await response.text();
-            console.error('Error details:', errorText);
+            
+            try {
+                const errorText = await response.text();
+                console.error('Error details:', errorText);
+                
+                if (isCloudflare && response.status >= 500) {
+                    console.warn('Cloudflare deployment detected with server error. Switching to browser TTS permanently for this session.');
+                    sessionStorage.setItem('forceUseBrowserTTS', 'true');
+                }
+            } catch (e) {
+                console.error('Error parsing error response:', e);
+            }
+            
             return false;
         }
         

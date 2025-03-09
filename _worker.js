@@ -2,7 +2,18 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     
-    // Handle API requests
+    // Handle CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization, xi-api-key',
+          'Access-Control-Max-Age': '86400',
+        }
+      });
+    }
+    
     if (url.pathname.startsWith('/api/chat')) {
       if (request.method !== 'POST') {
         return new Response('Method not allowed', { status: 405 });
@@ -41,7 +52,6 @@ export default {
       }
     }
 
-    // Handle ElevenLabs TTS API
     if (url.pathname.startsWith('/api/elevenlabs-tts')) {
       if (request.method !== 'POST') {
         return new Response('Method not allowed', { status: 405 });
@@ -58,7 +68,6 @@ export default {
           });
         }
         
-        // Call ElevenLabs API with the API key from environment
         const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${voice_id}/stream-input?optimize_streaming_latency=0`;
         
         const response = await fetch(apiUrl, {
@@ -81,7 +90,6 @@ export default {
           throw new Error(`ElevenLabs API error: ${response.status}`);
         }
         
-        // Get the audio data and pass it through
         const audioData = await response.arrayBuffer();
         
         return new Response(audioData, {
@@ -95,7 +103,6 @@ export default {
       }
     }
 
-    // Handle ElevenLabs Debug API with more stable endpoint
     if (url.pathname.startsWith('/api/elevenlabs-tts-debug')) {
       if (request.method !== 'POST') {
         return new Response('Method not allowed', { status: 405 });
@@ -105,6 +112,12 @@ export default {
         const body = await request.json();
         const { text, voice_id, model_id, voice_settings } = body;
         
+        console.log('ElevenLabs request received:', {
+          textLength: text?.length,
+          voice_id,
+          hasApiKey: env.ELEVENLABS_API_KEY ? 'Yes (length: ' + env.ELEVENLABS_API_KEY.length + ')' : 'No',
+        });
+        
         if (!text || !voice_id) {
           return new Response(JSON.stringify({ error: 'Missing required parameters' }), {
             status: 400,
@@ -113,14 +126,19 @@ export default {
         }
         
         if (!env.ELEVENLABS_API_KEY) {
-          return new Response(JSON.stringify({ error: 'API key configuration error' }), {
+          console.error('ELEVENLABS_API_KEY is missing in environment variables');
+          return new Response(JSON.stringify({ 
+            error: 'API key configuration error',
+            details: 'ELEVENLABS_API_KEY is missing in environment variables' 
+          }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' }
           });
         }
         
-        // Use the standard TTS endpoint instead of streaming
         const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`;
+        
+        console.log('Calling ElevenLabs API:', apiUrl);
         
         const requestBody = {
           text: text,
@@ -131,45 +149,62 @@ export default {
           }
         };
         
+        const headers = {
+          'Content-Type': 'application/json',
+          'xi-api-key': env.ELEVENLABS_API_KEY,
+          'Accept': 'audio/mpeg'
+        };
+        
         const response = await fetch(apiUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'xi-api-key': env.ELEVENLABS_API_KEY,
-            'Accept': 'audio/mpeg'
-          },
+          headers: headers,
           body: JSON.stringify(requestBody)
         });
         
+        console.log('ElevenLabs response status:', response.status);
+        
         if (!response.ok) {
           const errorText = await response.text();
+          console.error('ElevenLabs API detailed error:', errorText);
+          
           return new Response(JSON.stringify({ 
             error: `ElevenLabs API error: ${response.status}`,
-            details: errorText
+            details: errorText || 'No details available from ElevenLabs API'
           }), {
             status: response.status,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
           });
         }
         
-        // Get the audio data and pass it through
         const audioData = await response.arrayBuffer();
+        console.log('Audio data received, size:', audioData.byteLength);
         
         return new Response(audioData, {
-          headers: { 'Content-Type': 'audio/mpeg' }
+          headers: { 
+            'Content-Type': 'audio/mpeg',
+            'Access-Control-Allow-Origin': '*'
+          }
         });
       } catch (error) {
+        console.error('ElevenLabs request error:', error.message, error.stack);
+        
         return new Response(JSON.stringify({ 
           error: 'Failed to get response from ElevenLabs',
-          details: error.message
+          details: error.message,
+          stack: error.stack
         }), {
           status: 500,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
         });
       }
     }
 
-    // Handle Hume AI WebSocket upgrade
     if (url.pathname.startsWith('/api/hume-ws')) {
       const humeResponse = await fetch('https://api.hume.ai/v0/stream/evi', {
         method: 'GET',
@@ -190,7 +225,6 @@ export default {
       return new Response('Failed to establish WebSocket connection', { status: 500 });
     }
 
-    // Serve static files
     return env.ASSETS.fetch(request);
   }
 }; 
