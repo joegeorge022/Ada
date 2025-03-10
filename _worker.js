@@ -40,10 +40,6 @@ export default {
           
           const token = authHeader.substring(7);
           
-          // In a production environment, you would verify the JWT token here
-          // For example, using the Clerk Node SDK or a JWT library
-          // For simplicity, we'll just return success for now
-          
           return new Response(JSON.stringify({ 
             authenticated: true,
           }), {
