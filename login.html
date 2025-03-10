@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ada - Sign In</title>
+    
+    <!-- Updated Clerk script with more reliable loading -->
+    <script
+      async
+      crossorigin="anonymous"
+      data-clerk-publishable-key="pk_test_ZmFpdGhmdWwtYnVnLTQuY2xlcmsuYWNjb3VudHMuZGV2JA"
+      src="https://faithful-bug-4.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      type="text/javascript">
+    </script>
+    
+    <style>
+        :root {
+            --neon-pink: #ff2e88;
+            --neon-blue: #00fff9;
+            --dark-bg: #0a0a16;
+            --darker-bg: #050508;
+            --cyber-gradient: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0.8), 
+                rgba(0, 255, 249, 0.8)
+            );
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: url('images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            color: white;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 22, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            background: rgba(255, 46, 136, 0.2);
+            border: 1px solid var(--neon-pink);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 46, 136, 0.3);
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+            transform: translateX(-3px);
+        }
+
+        .ada-welcome {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ada-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 46, 136, 0.5);
+            margin: 0 auto 15px;
+            display: block;
+            animation: glow 3s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 15px rgba(255, 46, 136, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 46, 136, 0.8); }
+            100% { box-shadow: 0 0 15px rgba(255, 46, 136, 0.5); }
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            background: var(--cyber-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 5px rgba(255, 46, 136, 0.3);
+        }
+
+        .welcome-subtext {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        /* Auth Container - Improved to adapt to content */
+        #auth-container {
+            background: rgba(15, 15, 35, 0.9) !important;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 46, 136, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden; /* Changed back to hidden */
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--cyber-gradient);
+        }
+        
+        /* Auth Tabs - Enhanced styling */
+        .auth-tabs {
+            display: flex;
+            margin: 0;
+            gap: 0;
+            position: relative;
+            z-index: 5;
+            background: rgba(5, 5, 15, 0.9);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            border: none;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            border: none;
+        }
+        
+        .auth-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-tab.active {
+            color: white !important;
+            background-color: rgba(255, 46, 136, 0.15) !important;
+            text-shadow: 0 0 10px rgba(255, 46, 136, 0.3) !important;
+        }
+        
+        .auth-tab.active::after {
+            background: var(--neon-pink);
+        }
+        
+        .auth-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Auth views - improved to adapt to content */
+        #auth-views {
+            padding: 20px;
+            min-height: 300px;
+        }
+        
+        #signin-view, #signup-view {
+            position: relative; /* Changed from absolute to relative */
+            display: none; /* Changed from opacity/pointer-events to display */
+            width: 100%;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        
+        #signin-view.active, #signup-view.active {
+            display: block; /* Changed from opacity to display */
+        }
+        
+        /* Loading spinner - centered properly */
+        .loader {
+            margin: 25px auto;
+            border: 4px solid rgba(255, 46, 136, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--neon-pink);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Enhanced Clerk component styling */
+        .cl-rootBox {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .cl-card {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .cl-main {
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        /* Form fields with proper spacing */
+        .cl-formFieldInput {
+            background-color: rgba(25, 25, 45, 0.8) !important;
+            border: 1px solid rgba(255, 46, 136, 0.4) !important;
+            color: white !important;
+            font-size: 16px !important;
+            padding: 12px !important;
+            height: auto !important; 
+            width: 100% !important;
+            box-sizing: border-box !important;
+            transition: all 0.3s ease !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .cl-formFieldInput:focus {
+            background-color: rgba(35, 35, 55, 0.9) !important;
+            border-color: var(--neon-pink) !important;
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.4) !important;
+        }
+        
+        .cl-formField {
+            margin-bottom: 15px !important;
+            width: 100% !important;
+        }
+        
+        .cl-formButtonPrimary {
+            background: var(--neon-pink) !important;
+            color: white !important;
+            height: auto !important;
+            padding: 12px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            border-radius: 6px !important;
+            font-family: 'Rajdhani', sans-serif !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            font-weight: 600 !important;
+            font-size: 16px !important;
+            border: none !important;
+            margin-top: 10px !important;
+            margin-bottom: 10px !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 0 10px rgba(255, 46, 136, 0.2) !important;
+        }
+        
+        /* Footer fixes to prevent overflow */
+        .cl-footer {
+            width: 100% !important;
+            margin-top: 10px !important;
+            padding: 0 !important;
+        }
+        
+        .cl-footerActionLink {
+            color: var(--neon-blue) !important;
+            text-shadow: 0 0 8px rgba(0, 255, 249, 0.3) !important;
+        }
+        
+        .cl-footerActionText {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        /* Social buttons with better spacing */
+        .cl-socialButtonsBlock {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            margin: 15px 0 !important;
+        }
+        
+        /* Social buttons base styling with much brighter background */
+        .cl-socialButtonsIconButton {
+            background: rgba(255, 46, 136, 0.35) !important; /* Brighter pink background */
+            border: 2px solid rgba(255, 46, 136, 0.9) !important; /* Stronger border */
+            color: white !important;
+            border-radius: 8px !important;
+            min-width: 48px !important;
+            min-height: 48px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+            padding: 10px !important;
+            margin: 0 5px !important;
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3) !important; /* Stronger glow */
+        }
+        
+        /* GitHub button specific styling - even more distinctive */
+        .cl-socialButtonsIconButton[data-social-provider="oauth_github"] {
+            background: rgba(255, 46, 136, 0.4) !important; /* Brighter than the base */
+            border: 2px solid var(--neon-pink) !important;
+            box-shadow: 0 0 12px rgba(255, 46, 136, 0.4) !important;
+        }
+        
+        .cl-socialButtonsIconButton[data-social-provider="oauth_github"]:hover {
+            background: rgba(255, 46, 136, 0.6) !important;
+            border: 2px solid var(--neon-pink) !important;
+            box-shadow: 0 0 20px rgba(255, 46, 136, 0.6) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Google button specific styling - also very distinctive */
+        .cl-socialButtonsIconButton[data-social-provider="oauth_google"] {
+            background: rgba(255, 46, 136, 0.4) !important;
+            border: 2px solid var(--neon-pink) !important;
+            box-shadow: 0 0 12px rgba(255, 46, 136, 0.4) !important;
+        }
+        
+        .cl-socialButtonsIconButton[data-social-provider="oauth_google"]:hover {
+            background: rgba(255, 46, 136, 0.6) !important;
+            border: 2px solid var(--neon-pink) !important;
+            box-shadow: 0 0 20px rgba(255, 46, 136, 0.6) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Social button icons with stronger glow */
+        .cl-socialButtonsIconButton svg {
+            width: 24px !important;
+            height: 24px !important;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) !important;
+        }
+        
+        /* Make the social provider text more visible */
+        .cl-socialButtonsBlockButton span {
+            color: white !important;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Add a pulsing animation to make buttons more noticeable */
+        @keyframes subtle-pulse {
+            0% { box-shadow: 0 0 10px rgba(255, 46, 136, 0.3); }
+            50% { box-shadow: 0 0 18px rgba(255, 46, 136, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(255, 46, 136, 0.3); }
+        }
+        
+        .cl-socialButtonsIconButton {
+            animation: subtle-pulse 2s infinite ease-in-out !important;
+        }
+        
+        /* Improve divider text */
+        .cl-dividerText {
+            color: white !important;
+            background: rgba(15, 15, 35, 0.95) !important;
+            font-weight: 500 !important;
+            text-shadow: 0 0 5px rgba(255, 46, 136, 0.2) !important;
+            padding: 0 15px !important;
+        }
+        
+        .cl-dividerLine {
+            background: rgba(255, 255, 255, 0.2) !important;
+            height: 1px !important;
+            box-shadow: 0 0 5px rgba(255, 46, 136, 0.2) !important;
+        }
+        
+        /* Improve form field placeholder text */
+        .cl-formFieldInput::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        /* Additional text contrast improvements */
+        .cl-formFieldLabel {
+            color: white !important;
+            font-weight: 500 !important;
+            text-shadow: 0 0 5px rgba(255, 46, 136, 0.2) !important;
+            margin-bottom: 5px !important;
+        }
+        
+        /* Desktop Specific Optimizations */
+        @media (min-width: 768px) {
+            .login-container {
+                max-width: 480px;
+                padding: 30px;
+            }
+            
+            #signin-view, #signup-view {
+                padding: 30px;
+            }
+            
+            .auth-tab {
+                font-size: 20px;
+                padding: 16px;
+            }
+            
+            /* Desktop-specific button styling */
+            .cl-formButtonPrimary {
+                padding: 14px !important;
+                font-size: 18px !important;
+            }
+            
+            .cl-formFieldInput {
+                padding: 14px !important;
+            }
+            
+            /* Desktop spacing for social buttons */
+            .cl-socialButtonsBlock {
+                gap: 25px !important;
+                margin: 20px 0 !important;
+            }
+            
+            .cl-socialButtonsIconButton {
+                min-width: 54px !important;
+                min-height: 54px !important;
+            }
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 15px;
+                max-width: 100%;
+            }
+            
+            .ada-avatar {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-text {
+                font-size: 28px;
+            }
+            
+            .welcome-subtext {
+                font-size: 16px;
+            }
+            
+            #signin-view, #signup-view {
+                padding: 20px 15px;
+            }
+            
+            .auth-tab {
+                padding: 12px 8px;
+                font-size: 16px;
+            }
+            
+            /* Mobile-specific form styling */
+            .cl-formButtonPrimary {
+                padding: 10px !important;
+                font-size: 16px !important;
+            }
+            
+            .cl-formFieldInput {
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .cl-formField {
+                margin-bottom: 10px !important;
+            }
+            
+            /* Better spacing for mobile forms */
+            .cl-socialButtonsBlock {
+                gap: 10px !important;
+                margin: 15px 0 !important;
+            }
+            
+            .cl-socialButtonsIconButton {
+                min-width: 42px !important;
+                min-height: 42px !important;
+                padding: 8px !important;
+            }
+        }
+        
+        /* Small screens */
+        @media (max-width: 375px) {
+            .login-container {
+                padding: 10px;
+            }
+            
+            .ada-avatar {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .welcome-text {
+                font-size: 24px;
+            }
+            
+            .welcome-subtext {
+                font-size: 14px;
+            }
+            
+            #signin-view, #signup-view {
+                padding: 15px 10px;
+            }
+            
+            .auth-tab {
+                font-size: 14px;
+                padding: 10px 5px;
+            }
+            
+            /* Compact styling for very small screens */
+            .cl-formButtonPrimary {
+                padding: 8px !important;
+            }
+            
+            .cl-formFieldInput {
+                padding: 8px !important;
+            }
+            
+            /* Adjusted social buttons spacing */
+            .cl-socialButtonsBlock {
+                gap: 8px !important;
+            }
+            
+            .cl-socialButtonsIconButton {
+                min-width: 38px !important;
+                min-height: 38px !important;
+            }
+        }
+        
+        /* Hide all Clerk branding */
+        .cl-badge,
+        .cl-powered,
+        [class*="clerk-badge"],
+        [class*="clerk-powered"],
+        [data-clerk-badge="true"],
+        [class*="-development-badge"],
+        [class*="cl-footerText"],
+        .cl-internal-uyu30o,
+        .cl-internal-16y1u1r,
+        .cl-internal-1ep5yj9,
+        .cl-internal-wq52yk,
+        .cl-internal-1vtzibh,
+        .cl-internal-1bpxb4s,
+        .cl-internal-1nf2d4i,
+        [class*="cl-development"],
+        .cl-footer-clerk-label,
+        .cl-footer-clerk-text,
+        .cl-footer-clerk-link {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            opacity: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            min-height: 0 !important;
+            min-width: 0 !important;
+        }
+
+        /* Ensure form fields stay within container */
+        .cl-form {
+            width: 100% !important;
+            max-width: none !important;
+        }
+
+        .cl-formButtonPrimary {
+            width: 100% !important;
+            margin: 10px 0 !important;
+        }
+
+        /* Improve header text visibility */
+        .cl-headerTitle {
+            color: white !important;
+            font-size: 24px !important;
+            font-weight: 600 !important;
+            text-shadow: 0 0 10px rgba(255, 46, 136, 0.3) !important;
+            margin-bottom: 8px !important;
+        }
+
+        .cl-headerSubtitle {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 16px !important;
+            margin-bottom: 20px !important;
+            text-shadow: 0 0 5px rgba(0, 255, 249, 0.2) !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Chat
+    </a>
+    <div class="login-container">
+        <div class="ada-welcome">
+            <img src="images/chat.jpg" alt="Ada" class="ada-avatar">
+            <h1 class="welcome-text">I've Missed You!</h1>
+            <p class="welcome-subtext">Let's continue our conversation...</p>
+        </div>
+        <div id="auth-container">
+            <div class="auth-tabs">
+                <button id="signin-tab" class="auth-tab active">Sign In</button>
+                <button id="signup-tab" class="auth-tab">Sign Up</button>
+            </div>
+            <div id="auth-views">
+                <div id="signin-view" class="active">
+                    <div class="loader"></div>
+                    <div style="text-align: center; margin-top: 10px;">Loading authentication...</div>
+                </div>
+                <div id="signup-view">
+                    <div class="loader"></div>
+                    <div style="text-align: center; margin-top: 10px;">Loading sign-up form...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const signinView = document.getElementById('signin-view');
+            const signupView = document.getElementById('signup-view');
+            const signinTab = document.getElementById('signin-tab');
+            const signupTab = document.getElementById('signup-tab');
+            
+            // Tab switching functionality
+            signinTab.addEventListener('click', () => {
+                signinTab.classList.add('active');
+                signupTab.classList.remove('active');
+                signinView.classList.add('active');
+                signupView.classList.remove('active');
+            });
+            
+            signupTab.addEventListener('click', () => {
+                signupTab.classList.add('active');
+                signinTab.classList.remove('active');
+                signupView.classList.add('active');
+                signinView.classList.remove('active');
+            });
+
+            // Initialize Clerk
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            function initializeClerk() {
+                if (window.Clerk) {
+                    window.Clerk.load()
+                        .then(() => {
+                            // Clear loading state
+                            signinView.innerHTML = '';
+                            signupView.innerHTML = '';
+                            
+                            // Mount Sign In component
+                            window.Clerk.mountSignIn(signinView, {
+                                appearance: {
+                                    elements: {
+                                        rootBox: {
+                                            boxShadow: 'none',
+                                            width: '100%'
+                                        },
+                                        card: {
+                                            border: 'none',
+                                            boxShadow: 'none',
+                                            backgroundColor: 'transparent'
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // Mount Sign Up component
+                            window.Clerk.mountSignUp(signupView, {
+                                appearance: {
+                                    elements: {
+                                        rootBox: {
+                                            boxShadow: 'none',
+                                            width: '100%'
+                                        },
+                                        card: {
+                                            border: 'none',
+                                            boxShadow: 'none',
+                                            backgroundColor: 'transparent'
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // Force a refresh of the active view after mounting
+                            setTimeout(() => {
+                                // Simulate a tab click to ensure proper rendering
+                                if (signinView.classList.contains('active')) {
+                                    signinTab.click();
+                                } else {
+                                    signupTab.click();
+                                }
+                            }, 100);
+                        })
+                        .catch(error => {
+                            console.error('Error loading Clerk:', error);
+                            const errorMessage = `
+                                <div style="text-align: center; color: white;">
+                                    <p>Failed to load authentication. Please try again.</p>
+                                    <button onclick="window.location.reload()" 
+                                            style="background: rgba(255, 46, 136, 0.2); border: 1px solid var(--neon-pink); 
+                                                   color: white; padding: 10px 15px; margin-top: 15px; cursor: pointer; 
+                                                   border-radius: 5px;">
+                                        Retry
+                                    </button>
+                                </div>
+                            `;
+                            signinView.innerHTML = errorMessage;
+                            signupView.innerHTML = errorMessage;
+                        });
+                } else if (attempts < maxAttempts) {
+                    attempts++;
+                    setTimeout(initializeClerk, 500);
+                } else {
+                    const errorMessage = `
+                        <div style="text-align: center; color: white;">
+                            <p>Authentication service failed to load. Please refresh the page.</p>
+                            <button onclick="window.location.reload()" 
+                                    style="background: rgba(255, 46, 136, 0.2); border: 1px solid var(--neon-pink); 
+                                           color: white; padding: 10px 15px; margin-top: 15px; cursor: pointer; 
+                                           border-radius: 5px;">
+                                Refresh Page
+                            </button>
+                        </div>
+                    `;
+                    signinView.innerHTML = errorMessage;
+                    signupView.innerHTML = errorMessage;
+                }
+            }
+
+            initializeClerk();
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</body>
+</html> 
