@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ada - User Profile</title>
+
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    
+    <script
+      async
+      crossorigin="anonymous"
+      data-clerk-publishable-key="pk_test_ZmFpdGhmdWwtYnVnLTQuY2xlcmsuYWNjb3VudHMuZGV2JA"
+      src="https://faithful-bug-4.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      type="text/javascript">
+    </script>
+    
+    <style>
+        :root {
+            --neon-pink: #ff2e88;
+            --neon-blue: #00fff9;
+            --dark-bg: #0a0a16;
+            --darker-bg: #050508;
+            --cyber-gradient: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0.8), 
+                rgba(0, 255, 249, 0.8)
+            );
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: url('images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            color: white;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 22, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            background: rgba(255, 46, 136, 0.2);
+            border: 1px solid var(--neon-pink);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 46, 136, 0.3);
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+            transform: translateX(-3px);
+        }
+
+        .profile-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            background: var(--cyber-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 5px rgba(255, 46, 136, 0.3);
+        }
+
+        .profile-card {
+            background: rgba(15, 15, 35, 0.9);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 46, 136, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--cyber-gradient);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 46, 136, 0.5);
+            margin-bottom: 20px;
+            animation: glow 3s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 15px rgba(255, 46, 136, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 46, 136, 0.8); }
+            100% { box-shadow: 0 0 15px rgba(255, 46, 136, 0.5); }
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 46, 136, 0.3);
+        }
+
+        .profile-email {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px rgba(0, 255, 249, 0.2);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--neon-pink);
+            text-shadow: 0 0 8px rgba(255, 46, 136, 0.3);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px rgba(0, 255, 249, 0.3);
+            border-bottom: 1px solid rgba(0, 255, 249, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .account-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-button {
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-button:hover {
+            background: rgba(255, 46, 136, 0.1);
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+        }
+
+        .action-button.danger {
+            border-color: #ff3a3a;
+        }
+
+        .action-button.danger:hover {
+            background: rgba(255, 58, 58, 0.1);
+            box-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+        }
+
+        .action-button i {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sign-out-button {
+            background: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0.8), 
+                rgba(0, 255, 249, 0.8)
+            );
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: A5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+        }
+
+        .sign-out-button:hover {
+            box-shadow: 0 0 25px rgba(255, 46, 136, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .delete-account-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 8, 0.9);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .delete-account-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: rgba(15, 15, 35, 0.95);
+            border: 1px solid var(--neon-pink);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 46, 136, 0.3);
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 46, 136, 0.3);
+        }
+
+        .modal-text {
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button.cancel {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: white;
+        }
+
+        .modal-button.cancel:hover {
+            background: rgba(0, 255, 249, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 249, 0.3);
+        }
+
+        .modal-button.confirm {
+            background: #ff3a3a;
+            border: none;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+        }
+
+        .modal-button.confirm:hover {
+            background: #ff5a5a;
+            box-shadow: 0 0 25px rgba(255, 58, 58, 0.5);
+        }
+
+        #loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 8, 0.8);
+            z-index: 10;
+        }
+
+        .loader {
+            margin: 25px auto;
+            border: 4px solid rgba(255, 46, 136, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--neon-pink);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                margin-top: 60px;
+                padding: 0 15px;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-name {
+                font-size: 24px;
+            }
+
+            .profile-email {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .profile-stats {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .profile-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-container {
+                margin-top: 50px;
+                padding: 0 10px;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .profile-name {
+                font-size: 22px;
+            }
+
+            .profile-email {
+                font-size: 14px;
+            }
+
+            .profile-section {
+                padding: 15px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .action-button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .sign-out-button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Chat
+    </a>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="profile-title">User Profile</h1>
+        </div>
+        <div class="profile-card">
+            <div class="profile-info" id="loading-overlay">
+                <div class="loader"></div>
+                <div style="margin-top: 15px; color: white;">Loading profile data...</div>
+            </div>
+            <div class="profile-info" id="profile-content" style="display: none;">
+                <img id="profile-avatar" class="profile-avatar" src="images/chat.jpg" alt="User Avatar">
+                <h2 id="profile-name" class="profile-name">User Name</h2>
+                <p id="profile-email" class="profile-email">user@example.com</p>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="conversations-count">0</div>
+                        <div class="stat-label">Conversations</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="messages-count">0</div>
+                        <div class="stat-label">Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="days-member">0</div>
+                        <div class="stat-label">Days</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3 class="section-title">Account Management</h3>
+                <div class="account-actions">
+                    <button class="action-button" id="edit-profile-button">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </button>
+                    <button class="action-button" id="change-password-button">
+                        <i class="fas fa-key"></i>
+                        Change Password
+                    </button>
+                    <button class="action-button danger" id="delete-account-button">
+                        <i class="fas fa-trash-alt"></i>
+                        Delete Account
+                    </button>
+                </div>
+                
+                <button class="sign-out-button" id="sign-out-button">Sign Out</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="delete-account-modal" id="delete-account-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Delete Your Account</h3>
+            <p class="modal-text">Are you sure you want to delete your account? This action cannot be undone, and all your data will be permanently removed.</p>
+            <div class="modal-actions">
+                <button class="modal-button cancel" id="cancel-delete-button">Cancel</button>
+                <button class="modal-button confirm" id="confirm-delete-button">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const profileContent = document.getElementById('profile-content');
+            const profileAvatar = document.getElementById('profile-avatar');
+            const profileName = document.getElementById('profile-name');
+            const profileEmail = document.getElementById('profile-email');
+            const deleteAccountButton = document.getElementById('delete-account-button');
+            const deleteAccountModal = document.getElementById('delete-account-modal');
+            const cancelDeleteButton = document.getElementById('cancel-delete-button');
+            const confirmDeleteButton = document.getElementById('confirm-delete-button');
+            const signOutButton = document.getElementById('sign-out-button');
+            const editProfileButton = document.getElementById('edit-profile-button');
+            const changePasswordButton = document.getElementById('change-password-button');
+            
+            // Stats elements
+            const conversationsCount = document.getElementById('conversations-count');
+            const messagesCount = document.getElementById('messages-count');
+            const daysMember = document.getElementById('days-member');
+            
+            // Initialize auth
+            async function initializeClerk() {
+                if (!window.Clerk) {
+                    // Retry if Clerk isn't loaded yet
+                    setTimeout(initializeClerk, 500);
+                    return;
+                }
+                
+                try {
+                    await window.Clerk.load();
+                    
+                    if (!window.Clerk.user) {
+                        // Redirect to login if not logged in
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    
+                    // Show user data
+                    const user = window.Clerk.user;
+                    
+                    // Set user info
+                    profileName.textContent = user.fullName || user.username || 'User';
+                    profileEmail.textContent = user.primaryEmailAddress?.emailAddress || '';
+                    
+                    if (user.imageUrl) {
+                        profileAvatar.src = user.imageUrl;
+                    }
+                    
+                    // Calculate stats
+                    // These would typically come from your backend
+                    // Using placeholder calculations for now
+                    const now = new Date();
+                    const createdAt = new Date(user.createdAt);
+                    const daysSinceCreation = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+                    
+                    daysMember.textContent = daysSinceCreation || 1;
+                    
+                    // Fetch conversation history from localStorage to get message counts
+                    try {
+                        const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                        messagesCount.textContent = chatHistory.length;
+                        
+                        // Simple estimation of conversations (every 10 messages)
+                        conversationsCount.textContent = Math.max(1, Math.ceil(chatHistory.length / 10));
+                    } catch (e) {
+                        messagesCount.textContent = '0';
+                        conversationsCount.textContent = '0';
+                    }
+                    
+                    // Hide loading overlay and show content
+                    loadingOverlay.style.display = 'none';
+                    profileContent.style.display = 'flex';
+                    
+                } catch (error) {
+                    console.error('Error initializing Clerk:', error);
+                    alert('Failed to load profile data. Please try again later.');
+                    window.location.href = '/';
+                }
+            }
+            
+            // Initialize auth
+            initializeClerk();
+            
+            // Handle account actions
+            deleteAccountButton.addEventListener('click', function() {
+                deleteAccountModal.classList.add('active');
+            });
+            
+            cancelDeleteButton.addEventListener('click', function() {
+                deleteAccountModal.classList.remove('active');
+            });
+            
+            confirmDeleteButton.addEventListener('click', async function() {
+                try {
+                    if (window.Clerk && window.Clerk.user) {
+                        await window.Clerk.user.delete();
+                        alert('Your account has been deleted successfully.');
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    console.error('Error deleting account:', error);
+                    alert('Failed to delete account. Please try again later.');
+                    deleteAccountModal.classList.remove('active');
+                }
+            });
+            
+            signOutButton.addEventListener('click', async function() {
+                try {
+                    if (window.Clerk) {
+                        await window.Clerk.signOut();
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    console.error('Error signing out:', error);
+                    alert('Failed to sign out. Please try again.');
+                }
+            });
+            
+            editProfileButton.addEventListener('click', function() {
+                if (window.Clerk) {
+                    window.Clerk.openUserProfile();
+                }
+            });
+            
+            changePasswordButton.addEventListener('click', function() {
+                if (window.Clerk) {
+                    window.Clerk.openUserProfile({
+                        initialPage: 'security'
+                    });
+                }
+            });
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</body>
+</html> 

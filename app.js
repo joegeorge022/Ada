@@ -642,6 +642,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.location.href = '/login.html';
         });
     }
+    
+    // Add click handler to user profile section
+    if (userProfile) {
+        userProfile.addEventListener('click', function() {
+            window.location.href = '/profile.html';
+        });
+        userProfile.style.cursor = 'pointer'; // Add cursor pointer to indicate clickable
+    }
 });
 
 async function initializeClerk() {
