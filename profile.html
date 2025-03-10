@@ -206,40 +206,69 @@
         }
 
         .section-title {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: var(--neon-blue);
-            text-shadow: 0 0 8px rgba(0, 255, 249, 0.3);
-            border-bottom: 1px solid rgba(0, 255, 249, 0.3);
-            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 249, 0.4);
+            letter-spacing: 1px;
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
         .account-actions {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
+            margin-bottom: 40px;
         }
 
         .action-button {
-            background: transparent;
+            background: rgba(10, 10, 22, 0.7);
             border: 1px solid var(--neon-pink);
             color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
+            padding: 16px 24px;
+            border-radius: 8px;
             cursor: pointer;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 500;
             transition: all 0.3s ease;
             text-align: left;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 46, 136, 0.1), transparent);
+            transform: translateX(-100%);
         }
 
         .action-button:hover {
             background: rgba(255, 46, 136, 0.1);
-            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+            box-shadow: 0 0 20px rgba(255, 46, 136, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .action-button:hover::after {
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .action-button.danger {
@@ -248,39 +277,68 @@
 
         .action-button.danger:hover {
             background: rgba(255, 58, 58, 0.1);
-            box-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+            box-shadow: 0 0 20px rgba(255, 58, 58, 0.3);
         }
 
         .action-button i {
-            font-size: 18px;
-            width: 20px;
+            font-size: 20px;
+            width: 24px;
             text-align: center;
+            text-shadow: 0 0 8px rgba(255, 46, 136, 0.5);
         }
 
         .sign-out-button {
-            background: linear-gradient(45deg, 
-                rgba(255, 46, 136, 0.8), 
-                rgba(0, 255, 249, 0.8)
+            background: linear-gradient(90deg, 
+                rgba(200, 80, 192, 0.8), 
+                rgba(80, 200, 255, 0.8)
             );
             color: white;
             border: none;
-            padding: 14px 30px;
+            padding: 16px 30px;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: A5px;
+            letter-spacing: 2px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: block;
-            margin: 30px auto;
-            box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+            margin: 40px auto 20px;
+            box-shadow: 0 0 20px rgba(200, 80, 192, 0.4);
+            position: relative;
+            overflow: hidden;
+            width: 200px;
+            text-align: center;
+        }
+
+        .sign-out-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                rgba(255, 46, 136, 0), 
+                rgba(255, 46, 136, 0.3), 
+                rgba(0, 255, 249, 0.3), 
+                rgba(0, 255, 249, 0)
+            );
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+            border-radius: 8px;
         }
 
         .sign-out-button:hover {
-            box-shadow: 0 0 25px rgba(255, 46, 136, 0.5);
-            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(200, 80, 192, 0.6);
+            transform: translateY(-3px) scale(1.02);
+            letter-spacing: 2.5px;
+        }
+
+        @keyframes borderGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .delete-account-modal {
@@ -514,16 +572,13 @@
                 <h3 class="section-title">Account Management</h3>
                 <div class="account-actions">
                     <button class="action-button" id="edit-profile-button">
-                        <i class="fas fa-user-edit"></i>
-                        Edit Profile
+                        <i class="fas fa-user-edit"></i> Edit Profile
                     </button>
                     <button class="action-button" id="change-password-button">
-                        <i class="fas fa-key"></i>
-                        Change Password
+                        <i class="fas fa-key"></i> Change Password
                     </button>
                     <button class="action-button danger" id="delete-account-button">
-                        <i class="fas fa-trash-alt"></i>
-                        Delete Account
+                        <i class="fas fa-trash-alt"></i> Delete Account
                     </button>
                 </div>
                 
@@ -558,15 +613,12 @@
             const editProfileButton = document.getElementById('edit-profile-button');
             const changePasswordButton = document.getElementById('change-password-button');
             
-            // Stats elements
             const conversationsCount = document.getElementById('conversations-count');
             const messagesCount = document.getElementById('messages-count');
             const daysMember = document.getElementById('days-member');
             
-            // Initialize auth
             async function initializeClerk() {
                 if (!window.Clerk) {
-                    // Retry if Clerk isn't loaded yet
                     setTimeout(initializeClerk, 500);
                     return;
                 }
@@ -575,15 +627,12 @@
                     await window.Clerk.load();
                     
                     if (!window.Clerk.user) {
-                        // Redirect to login if not logged in
                         window.location.href = '/login.html';
                         return;
                     }
                     
-                    // Show user data
                     const user = window.Clerk.user;
                     
-                    // Set user info
                     profileName.textContent = user.fullName || user.username || 'User';
                     profileEmail.textContent = user.primaryEmailAddress?.emailAddress || '';
                     
@@ -591,28 +640,22 @@
                         profileAvatar.src = user.imageUrl;
                     }
                     
-                    // Calculate stats
-                    // These would typically come from your backend
-                    // Using placeholder calculations for now
                     const now = new Date();
                     const createdAt = new Date(user.createdAt);
                     const daysSinceCreation = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
                     
                     daysMember.textContent = daysSinceCreation || 1;
                     
-                    // Fetch conversation history from localStorage to get message counts
                     try {
                         const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
                         messagesCount.textContent = chatHistory.length;
                         
-                        // Simple estimation of conversations (every 10 messages)
                         conversationsCount.textContent = Math.max(1, Math.ceil(chatHistory.length / 10));
                     } catch (e) {
                         messagesCount.textContent = '0';
                         conversationsCount.textContent = '0';
                     }
                     
-                    // Hide loading overlay and show content
                     loadingOverlay.style.display = 'none';
                     profileContent.style.display = 'flex';
                     
@@ -623,10 +666,8 @@
                 }
             }
             
-            // Initialize auth
             initializeClerk();
             
-            // Handle account actions
             deleteAccountButton.addEventListener('click', function() {
                 deleteAccountModal.classList.add('active');
             });
