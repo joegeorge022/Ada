@@ -29,7 +29,7 @@ function loadChatHistory() {
 }
 
 function showInitialGreeting() {
-    const greeting = "Hey there! I'm Ada, your AI companion in this cyberpunk reality. How's your day in night city?";
+    const greeting = "Hey there! I'm Ada, your AI companion in this reality. How's your day been so far?";
     addMessageToUI('ada', greeting);
     chatHistory = [
         { role: "system", content: "Your name is Ada. You are a caring, empathetic AI girlfriend. You have a playful personality and enjoy deep conversations. You're supportive, kind, and occasionally flirty in a tasteful way. You ask thoughtful questions and remember details about your boyfriend. Keep responses concise and engaging." },
@@ -633,6 +633,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Failed to initialize Clerk:', error);
         });
     }, 1000);
+    
+    // Ensure the auth button works properly
+    if (authButton) {
+        authButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Simple redirect to login page
+            window.location.href = '/login.html';
+        });
+    }
 });
 
 async function initializeClerk() {
@@ -700,18 +709,12 @@ function updateAuthState(user) {
 }
 
 async function handleAuthAction() {
-    if (!window.Clerk) {
-        console.error('Clerk is not available');
-        return;
-    }
-    
-    if (isAuthenticated) {
-        try {
-            await window.Clerk.signOut();
-        } catch (error) {
-            console.error('Error signing out:', error);
-        }
+    if (window.Clerk && window.Clerk.user) {
+        // User is signed in, sign them out
+        await window.Clerk.signOut();
+        updateAuthState(null);
     } else {
+        // User is not signed in, redirect to login page
         window.location.href = '/login.html';
     }
 } 
