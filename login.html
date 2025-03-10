@@ -645,20 +645,39 @@
             const signinTab = document.getElementById('signin-tab');
             const signupTab = document.getElementById('signup-tab');
             
-            signinTab.addEventListener('click', () => {
+            // Define tab switching function that works with Clerk
+            function setupTabSwitching() {
+                // Remove any existing event listeners
+                signinTab.removeEventListener('click', switchToSignIn);
+                signupTab.removeEventListener('click', switchToSignUp);
+                
+                // Add fresh event listeners
+                signinTab.addEventListener('click', switchToSignIn);
+                signupTab.addEventListener('click', switchToSignUp);
+            }
+            
+            function switchToSignIn() {
+                console.log("Switching to sign in tab");
                 signinTab.classList.add('active');
                 signupTab.classList.remove('active');
                 signinView.classList.add('active');
                 signupView.classList.remove('active');
-            });
+                
+                signinView.style.display = 'block';
+                signupView.style.display = 'none';
+            }
             
-            signupTab.addEventListener('click', () => {
+            function switchToSignUp() {
+                console.log("Switching to sign up tab");
                 signupTab.classList.add('active');
                 signinTab.classList.remove('active');
                 signupView.classList.add('active');
                 signinView.classList.remove('active');
-            });
-
+                
+                signupView.style.display = 'block';
+                signinView.style.display = 'none';
+            }
+            
             let attempts = 0;
             const maxAttempts = 10;
             
@@ -666,9 +685,11 @@
                 if (window.Clerk) {
                     window.Clerk.load()
                         .then(() => {
+                            // Clear loading indicators
                             signinView.innerHTML = '';
                             signupView.innerHTML = '';
                             
+                            // Mount sign-in component
                             window.Clerk.mountSignIn(signinView, {
                                 appearance: {
                                     elements: {
@@ -682,9 +703,19 @@
                                             backgroundColor: 'transparent'
                                         }
                                     }
+                                },
+                                routing: {
+                                    path: '/sign-in',
+                                },
+                                signInUrl: '/login.html',
+                                signUpUrl: '/login.html',
+                                fallbackRedirectUrl: '/',
+                                displayConfig: {
+                                    preferMultiStep: true
                                 }
                             });
                             
+                            // Mount sign-up component
                             window.Clerk.mountSignUp(signupView, {
                                 appearance: {
                                     elements: {
@@ -698,16 +729,32 @@
                                             backgroundColor: 'transparent'
                                         }
                                     }
+                                },
+                                routing: {
+                                    path: '/sign-up',
+                                },
+                                signInUrl: '/login.html',
+                                signUpUrl: '/login.html',
+                                fallbackRedirectUrl: '/',
+                                displayConfig: {
+                                    preferMultiStep: true
                                 }
                             });
                             
+                            // Setup tab switching after Clerk components are mounted
                             setTimeout(() => {
-                                if (signinView.classList.contains('active')) {
-                                    signinTab.click();
+                                console.log("Setting up tab switching");
+                                
+                                // Make sure proper tab is active
+                                setupTabSwitching();
+                                
+                                // Initial tab state - start with sign-in view
+                                if (signinTab.classList.contains('active')) {
+                                    switchToSignIn();
                                 } else {
-                                    signupTab.click();
+                                    switchToSignUp();
                                 }
-                            }, 100);
+                            }, 500);
                         })
                         .catch(error => {
                             console.error('Error loading Clerk:', error);
