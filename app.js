@@ -59,7 +59,6 @@ let isVoiceEnabled = false;
 let isRecording = false;
 let recognition;
 
-// Clerk Authentication variables
 let isAuthenticated = false;
 let currentUser = null;
 const authButton = document.getElementById('auth-button');
@@ -257,7 +256,6 @@ async function sendMessage() {
     
     addMessageToUI('user', userMessage);
     
-    // Add user info to chat history if authenticated
     if (isAuthenticated && currentUser) {
         const userContext = { userId: currentUser.id, name: currentUser.firstName || currentUser.username };
         chatHistory.push({ role: "user", content: userMessage, userContext });
@@ -623,16 +621,13 @@ async function getOptimalFeminineVoice() {
     });
 }
 
-// Initialize Clerk when the document is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM loaded, initializing components...');
     
-    // Initialize other features
     loadChatHistory();
     initializeSpeechRecognition();
     initializeSpeakerState();
     
-    // Initialize Clerk with a slight delay to ensure the script has loaded
     setTimeout(() => {
         initializeClerk().catch(error => {
             console.error('Failed to initialize Clerk:', error);
@@ -641,7 +636,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initializeClerk() {
-    // Wait for Clerk to be available
     let attempts = 0;
     const maxAttempts = 10;
     
@@ -656,22 +650,18 @@ async function initializeClerk() {
     }
     
     try {
-        // Initialize Clerk with your publishable key
         await window.Clerk.load({
             publishableKey: "pk_test_ZmFpdGhmdWwtYnVnLTQuY2xlcmsuYWNjb3VudHMuZGV2JA"
         });
         
-        // Set up event listeners for auth state changes
         window.Clerk.addListener(({ user }) => {
             updateAuthState(user);
         });
         
-        // Initial check
         if (window.Clerk.user) {
             updateAuthState(window.Clerk.user);
         }
         
-        // Add click handler for auth button
         authButton.addEventListener('click', handleAuthAction);
         
         console.log('Clerk initialized successfully');
@@ -682,34 +672,27 @@ async function initializeClerk() {
 
 function updateAuthState(user) {
     if (user) {
-        // User is signed in
         isAuthenticated = true;
         currentUser = user;
         
-        // Update auth button to show sign out
         authButton.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sign Out';
         
-        // Update user profile display
         if (user.imageUrl) {
             userAvatar.src = user.imageUrl;
         } else {
-            userAvatar.src = 'images/me.jpg'; // Default avatar
+            userAvatar.src = 'images/me.jpg';
         }
         
         userName.textContent = user.firstName || user.username || user.emailAddresses[0].emailAddress;
         userProfile.style.display = 'flex';
         
-        // You might want to load user-specific chat history here
         console.log('User authenticated:', user.id);
     } else {
-        // User is signed out
         isAuthenticated = false;
         currentUser = null;
         
-        // Update auth button to show sign in
         authButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
         
-        // Hide user profile
         userProfile.style.display = 'none';
         
         console.log('User signed out');
@@ -723,15 +706,12 @@ async function handleAuthAction() {
     }
     
     if (isAuthenticated) {
-        // Sign out
         try {
             await window.Clerk.signOut();
-            // updateAuthState will be called by the Clerk listener
         } catch (error) {
             console.error('Error signing out:', error);
         }
     } else {
-        // Redirect to the login page instead of opening the modal
         window.location.href = '/login.html';
     }
 } 

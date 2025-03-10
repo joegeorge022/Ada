@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>Ada - Your AI Girlfriend | Companion</title>
-    <meta name="title" content="Ada - Your AI Girlfriend | Cyberpunk AI Companion">
-    <meta name="description" content="Experience deep, meaningful conversations with Ada, your cyberpunk AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
-    <meta name="keywords" content="AI girlfriend, cyberpunk companion, virtual relationship, AI chat, emotional AI, digital companion, Ada AI">
+    <meta name="title" content="Ada - Your AI Girlfriend | AI Companion">
+    <meta name="description" content="Experience deep, meaningful conversations with Ada, your AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
+    <meta name="keywords" content="AI girlfriend, AI companion, virtual relationship, AI chat, emotional AI, digital companion, Ada AI">
     <meta name="author" content="Joe">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -15,14 +15,14 @@
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ada-gf.pages.dev/">
-    <meta property="og:title" content="Ada - Your AI Girlfriend | Cyberpunk AI Companion">
-    <meta property="og:description" content="Experience deep, meaningful conversations with Ada, your cyberpunk AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
+    <meta property="og:title" content="Ada - Your AI Girlfriend | AI Companion">
+    <meta property="og:description" content="Experience deep, meaningful conversations with Ada, your AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
     <meta property="og:image" content="https://ada-gf.pages.dev/images/ada.webp">
     
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://ada-gf.pages.dev/">
-    <meta property="twitter:title" content="Ada - Your AI Girlfriend | Cyberpunk AI Companion">
-    <meta property="twitter:description" content="Experience deep, meaningful conversations with Ada, your cyberpunk AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
+    <meta property="twitter:title" content="Ada - Your AI Girlfriend | AI Companion">
+    <meta property="twitter:description" content="Experience deep, meaningful conversations with Ada, your AI girlfriend. Powered by advanced AI for empathetic, engaging, and authentic interactions.">
     <meta property="twitter:image" content="https://ada-gf.pages.dev/images/ada.webp">
     
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -41,8 +41,10 @@
       async
       crossorigin="anonymous"
       data-clerk-publishable-key="pk_test_ZmFpdGhmdWwtYnVnLTQuY2xlcmsuYWNjb3VudHMuZGV2JA"
-      src="https://faithful-bug-4.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
-      type="text/javascript">
+      src="https://faithful-bug-4.clerk.accounts.dev/npm/@clerk/clerk-js/dist/clerk.browser.js"
+      type="text/javascript"
+      onload="console.log('Clerk script loaded')"
+      onerror="console.error('Failed to load Clerk script')">
     </script>
     
     <style>
@@ -416,6 +418,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(10, 10, 22, 0.9);
             gap: 10px;
+            align-items: center;
         }
 
         .voice-control-button {
@@ -425,11 +428,15 @@
             border-radius: 50%;
             width: 40px;
             height: 40px;
+            min-width: 40px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            flex: 0 0 auto;
+            padding: 0;
         }
 
         .voice-control-button:hover {
@@ -450,7 +457,7 @@
         }
 
         #message-input {
-            flex-grow: 1;
+            flex: 1 1 auto;
             padding: 12px;
             border: 1px solid rgba(255, 46, 136, 0.5);
             border-radius: 5px;
@@ -458,6 +465,7 @@
             color: #fff;
             outline: none;
             transition: all 0.3s ease;
+            min-width: 0;
         }
 
         #message-input:focus {
@@ -473,12 +481,13 @@
             border: none;
             border-radius: 5px;
             padding: 12px 25px;
-            margin-left: 10px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: bold;
             transition: all 0.3s ease;
+            flex: 0 0 auto;
+            white-space: nowrap;
         }
 
         #send-button:hover {
@@ -569,18 +578,30 @@
             }
 
             .chat-input {
-                padding: 12px;
-                position: relative;
-                z-index: 2;
-                background: rgba(10, 10, 22, 0.95);
+                padding: 8px;
+                gap: 6px;
             }
 
             #message-input {
-                padding: 10px;
+                padding: 8px;
+                font-size: 14px;
             }
 
             #send-button {
-                padding: 10px 18px;
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+
+        @media screen and (max-width: 375px) {
+            .chat-input {
+                padding: 6px;
+                gap: 4px;
+            }
+            
+            #send-button {
+                padding: 8px 12px;
+                font-size: 12px;
             }
         }
 
@@ -632,7 +653,6 @@
             text-shadow: 0 0 8px var(--neon-pink);
         }
 
-        /* Add styles for user profile display */
         .user-profile {
             display: flex;
             align-items: center;
@@ -710,3 +730,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
