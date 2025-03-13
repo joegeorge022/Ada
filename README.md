@@ -1,6 +1,6 @@
-# Ada - Cyberpunk AI Girlfriend
+# Ada - AI Girlfriend
 
-Ada is a cyberpunk AI girlfriend powered by LLaMA 3 70B. Ada provides real-time, ultra-responsive, immersive conversations in a high-tech, dystopian-inspired interface. Ada adapts effortlessly for engaging discussions or immersive roleplay. Chat with Ada today✨!
+Ada is a AI girlfriend powered by LLaMA 3 70B. Ada provides real-time, ultra-responsive, immersive conversations in a high-tech, dystopian-inspired interface. Ada adapts effortlessly for engaging discussions or immersive roleplay. Chat with Ada today✨!
 
 ## 🌐 Core Features
 
